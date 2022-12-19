@@ -13,7 +13,7 @@ from selfdrive.controls.lib.desire_helper import LANE_CHANGE_SPEED_MIN
 
 PREV_BUTTON_SAMPLES = 8
 CLUSTER_SAMPLE_RATE = 20  # frames
-
+GearShifter = car.CarState.GearShifter
 
 class CarState(CarStateBase):
   def __init__(self, CP):
@@ -76,6 +76,7 @@ class CarState(CarStateBase):
     self.escc_aeb_dec_cmd = 0
     self.pcm_enabled = False
     self.prev_pcm_enabled = False
+    self.gear_shifter = GearShifter.drive # Gear_init for Nexo ?? unknown 21.02.23.LSW
     self._init_traffic_signals()
 
   def update(self, cp, cp_cam):
@@ -301,6 +302,21 @@ class CarState(CarStateBase):
       gear = cp.vl["TCU12"]["CUR_GR"]
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
+      gear_shifter = GearShifter.unknown
+
+      if gear == 1546:  # Thank you for Neokii 
+        gear_shifter = GearShifter.drive
+      elif gear == 2314:
+        gear_shifter = GearShifter.neutral
+      elif gear == 2569:
+        gear_shifter = GearShifter.park
+      elif gear == 2566:
+        gear_shifter = GearShifter.reverse
+
+      if gear_shifter != GearShifter.unknown and self.gear_shifter != gear_shifter:
+        self.gear_shifter = gear_shifter
+
+      ret.gearShifter = self.gear_shifter
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
 

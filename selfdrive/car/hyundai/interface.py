@@ -125,9 +125,10 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 3.000
       ret.steerRatio = 14.2  # steering ratio according to Hyundai News https://www.hyundainews.com/assets/documents/original/48035-2022SantaCruzProductGuideSpecsv2081521.pdf
     elif candidate == CAR.NEXO:
-      ret.mass = 1867. + STD_CARGO_KG
-      ret.wheelbase = 2.80
-      ret.steerRatio = 14.19
+      ret.mass = STD_CARGO_KG + 1885. #1867. #copy from PolorBear 22.06.05
+      ret.wheelbase = 2.79 #2.80
+      ret.steerRatio = 15.3 #14.19
+      tire_stiffness_factor = 0.385
 
     # Kia
     elif candidate == CAR.KIA_SORENTO:
