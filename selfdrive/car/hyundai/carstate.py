@@ -13,7 +13,6 @@ from selfdrive.controls.lib.desire_helper import LANE_CHANGE_SPEED_MIN
 
 PREV_BUTTON_SAMPLES = 8
 CLUSTER_SAMPLE_RATE = 20  # frames
-GearShifter = car.CarState.GearShifter
 
 class CarState(CarStateBase):
   def __init__(self, CP):
@@ -76,7 +75,6 @@ class CarState(CarStateBase):
     self.escc_aeb_dec_cmd = 0
     self.pcm_enabled = False
     self.prev_pcm_enabled = False
-    self.gear_shifter = GearShifter.drive # Gear_init for Nexo ?? unknown 21.02.23.LSW
     self._init_traffic_signals()
 
   def update(self, cp, cp_cam):
@@ -296,27 +294,14 @@ class CarState(CarStateBase):
 
     # Gear Selection via Cluster - For those Kia/Hyundai which are not fully discovered, we can use the Cluster Indicator for Gear Selection,
     # as this seems to be standard over all cars, but is not the preferred method.
-    if self.CP.carFingerprint in FEATURES["use_cluster_gears"]:
+    if self.CP.carFingerprint == CAR.NEXO:
+        gear = cp.vl["EMS20"]["Elect_Gear_Shifter_NEXO"]
+    elif self.CP.carFingerprint in FEATURES["use_cluster_gears"]:
       gear = cp.vl["CLU15"]["CF_Clu_Gear"]
     elif self.CP.carFingerprint in FEATURES["use_tcu_gears"]:
       gear = cp.vl["TCU12"]["CUR_GR"]
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
-      gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
-      gear_shifter = GearShifter.unknown
-
-      if gear == 1546:  # Thank you for Neokii 
-        gear_shifter = GearShifter.drive
-      elif gear == 2314:
-        gear_shifter = GearShifter.neutral
-      elif gear == 2569:
-        gear_shifter = GearShifter.park
-      elif gear == 2566:
-        gear_shifter = GearShifter.reverse
-
-      if gear_shifter != GearShifter.unknown and self.gear_shifter != gear_shifter:
-        self.gear_shifter = gear_shifter
-
-      ret.gearShifter = self.gear_shifter
+        gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
 
@@ -661,7 +646,10 @@ class CarState(CarStateBase):
         ("EMS16", 100),
       ]
 
-    if CP.carFingerprint in FEATURES["use_cluster_gears"]:
+    if CP.carFingerprint == CAR.NEXO:
+      signals.append(("Elect_Gear_Shifter_NEXO", "EMS20"))
+      checks.append(("EMS20", 20))
+    elif CP.carFingerprint in FEATURES["use_cluster_gears"]:
       signals.append(("CF_Clu_Gear", "CLU15"))
     elif CP.carFingerprint in FEATURES["use_tcu_gears"]:
       signals.append(("CUR_GR", "TCU12"))
