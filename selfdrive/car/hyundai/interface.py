@@ -137,7 +137,12 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1870. + STD_CARGO_KG  # weight from Limited trim - the only supported trim
       ret.wheelbase = 3.000
       ret.steerRatio = 14.2  # steering ratio according to Hyundai News https://www.hyundainews.com/assets/documents/original/48035-2022SantaCruzProductGuideSpecsv2081521.pdf
-
+    elif candidate == CAR.NEXO_2019:
+      ret.mass = STD_CARGO_KG + 1885. #1867. #copy from PolorBear 22.06.05
+      ret.wheelbase = 2.79 #2.80
+      ret.steerRatio = 15.3 #14.19
+      tire_stiffness_factor = 0.385
+      
     # Kia
     elif candidate == CAR.KIA_SORENTO:
       ret.mass = 1985. + STD_CARGO_KG
