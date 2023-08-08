@@ -138,7 +138,9 @@ class CarState(CarStateBase):
 
     # Gear Selection via Cluster - For those Kia/Hyundai which are not fully discovered, we can use the Cluster Indicator for Gear Selection,
     # as this seems to be standard over all cars, but is not the preferred method.
-    if self.CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
+    if self.CP.carFingerprint == CAR.NEXO_2019:
+        gear = cp.vl["EMS20"]["Elect_Gear_Shifter_NEXO"]
+    elif self.CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
       gear = cp.vl["CLU15"]["CF_Clu_Gear"]
     elif self.CP.carFingerprint in CAN_GEARS["use_tcu_gears"]:
       gear = cp.vl["TCU12"]["CUR_GR"]
@@ -427,7 +429,10 @@ class CarState(CarStateBase):
         ("EMS16", 100),
       ]
 
-    if CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
+    if CP.carFingerprint == CAR.NEXO_2019:
+      signals.append(("Elect_Gear_Shifter_NEXO", "EMS20"))
+      checks.append(("EMS20", 20))
+    elif CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
       signals.append(("CF_Clu_Gear", "CLU15"))
     elif CP.carFingerprint in CAN_GEARS["use_tcu_gears"]:
       signals.append(("CUR_GR", "TCU12"))
