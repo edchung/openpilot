@@ -352,6 +352,11 @@ class CAR(Platforms):
     CarSpecs(mass=1690, wheelbase=3.055, steerRatio=17),  # mass: from https://www.hyundai-motor.com.tw/clicktobuy/custin#spec_0, steerRatio: from learner
     flags=HyundaiFlags.CHECKSUM_CRC8,
   )
+  NEXO_2019 = HyundaiPlatformConfig(
+    [HyundaiCarDocs("Hyundai Nexo 2019", "All", car_parts=CarParts.common([CarHarness.hyundai_h]))],
+    CarSpecs(mass=1867, wheelbase=2.79, steerRatio=14.19),  #https://www.hyundainews.com/assets/documents/original/34407-2019NexoSpecificationsPPApprovedwRange10518.pdf
+    flags=HyundaiFlags.EV,
+  )
 
   # Kia
   KIA_FORTE = HyundaiPlatformConfig(

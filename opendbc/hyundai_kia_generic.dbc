@@ -1430,6 +1430,7 @@ BO_ 1280 ACU14: 1 ACU
 
 BO_ 512 EMS20: 6 EMS
  SG_ FCO : 0|16@1+ (0.128,0.0) [0.0|8388.48] "ul"  CLU,CUBIS,FPCM,IBOX
+ SG_ Elect_Gear_Shifter_NEXO : 11|3@1+ (1,0) [0|7] "" CLU
  SG_ CF_Ems_PumpTPres : 16|8@1+ (3.137254902,0.0) [0.0|800.0] "kPa"  FPCM,IBOX
  SG_ Split_Stat : 32|1@1+ (1.0,0.0) [0.0|1.0] ""  FPCM
 
@@ -1668,6 +1669,7 @@ CM_ SG_ 1056 SCCInfoDisplay "Goes to 1 for a second while transitioning from Cru
 CM_ SG_ 1348 SpeedLim_Nav_Clu "Speed limit displayed on Nav, Cluster and HUD";
 
 VAL_ 274 CUR_GR 1 "D" 2 "D" 3 "D" 4 "D" 5 "D" 6 "D" 7 "D" 8 "D" 14 "R" 0 "P";
+VAL_ 512 Elect_Gear_Shifter_NEXO 5 "D" 6 "N" 7 "R" 0 "P";
 VAL_ 871 CF_Lvr_IsgState 0 "enabled" 1 "activated" 2 "unknown" 3 "disabled";
 VAL_ 871 CF_Lvr_Gear 12 "T" 5 "D" 8 "S" 6 "N" 7 "R" 0 "P";
 VAL_ 882 Elect_Gear_Shifter 5 "D" 8 "S" 6 "N" 7 "R" 0 "P";
