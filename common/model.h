@@ -1,1 +1,1 @@
-#define CURRENT_MODEL "Farmville (November 7, 2023)"
+#define CURRENT_MODEL "North Dakota (April 29, 2024)"

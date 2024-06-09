@@ -35,8 +35,8 @@ public:
   const char *publish_name;
   const char *filename = NULL;
   bool record = true;
-  int frame_width = 1928;
-  int frame_height = 1208;
+  int frame_width = -1;
+  int frame_height = -1;
   int fps = MAIN_FPS;
   int bitrate = MAIN_BITRATE;
   cereal::EncodeIndex::Type encode_type = Hardware::PC() ? cereal::EncodeIndex::Type::BIG_BOX_LOSSLESS
@@ -152,3 +152,6 @@ const LogCameraInfo stream_driver_camera_info{
 
 const LogCameraInfo cameras_logged[] = {road_camera_info, wide_road_camera_info, driver_camera_info};
 const LogCameraInfo stream_cameras_logged[] = {stream_road_camera_info, stream_wide_road_camera_info, stream_driver_camera_info};
+
+const LogCameraInfo cameras_logged_no_dcam[] = {road_camera_info, wide_road_camera_info, driver_camera_info};
+const LogCameraInfo stream_cameras_logged_no_dcam[] = {stream_road_camera_info, stream_wide_road_camera_info, stream_driver_camera_info};
