@@ -27,8 +27,6 @@ sunnypilot - 0.9.7.0 (2024-05-xx)
 * NEW❗: Forced Offroad mode
   * Force sunnypilot in the offroad state even when the car is on
   * When Forced Offroad mode is on, allows changing offroad-only settings even when the car is turned on
-* NEW❗: Ford CAN-FD longitudinal
-  * NEW❗: Parse speed limit sign recognition from camera for certain supported platforms
 * UPDATED: Auto Lane Change Timer -> Auto Lane Change by Blinker
   * NEW❗: New "Off" option to disable lane change by blinker
 * UPDATED: Pause Lateral Below Speed with Blinker
@@ -36,8 +34,6 @@ sunnypilot - 0.9.7.0 (2024-05-xx)
     * Pause lateral actuation with blinker when traveling below the desired speed selected. Default is 20 MPH or 32 km/h.
 * UPDATED: Hyundai CAN Longitudinal
   * Auto-enable radar tracks on platforms with applicable Mando radar
-* UPDATED: Hyundai CAN-FD Radar-based SCC
-  * Longitudinal support for CAN-FD Radar-based SCC cars
 * UPDATED: Hyundai CAN-FD Camera-based SCC
   * NEW❗: Parse lead info for camera-based SCC platforms with longitudinal support
     * Improve lead tracking when using openpilot longitudinal
@@ -59,7 +55,6 @@ sunnypilot - 0.9.7.0 (2024-05-xx)
   * Reset self-service access tokens for Mapbox, Amap, and Google Maps
 * UPDATED: Upstream native support for Gap Adjust Cruise
 * UPDATED: Neural Network Lateral Control (NNLC)
-  * FIXED: Hotfix for "lazy" steering performance in tighter curves thanks to twilsonco!
   * Due to upstream changes with platform simplifications, most platforms will match and fallback to combined platform model
   * This will be updated when the new mapping of platforms are restructured (thanks @twilsonco 😉)
 * UI Updates
@@ -67,9 +62,6 @@ sunnypilot - 0.9.7.0 (2024-05-xx)
     * NEW❗: Metrics is now being displayed below the chevron instead of above
     * NEW❗: Display both Distance and Speed simultaneously
     * NEW❗: View sunnylink connectivity status on the left sidebar!
-* Ford F-150 2022-23 support
-* Ford F-150 Lightning 2021-23 support
-* Ford Mustang Mach-E 2021-23 support
 
 sunnypilot - 0.9.6.2 (2024-05-29)
 ========================

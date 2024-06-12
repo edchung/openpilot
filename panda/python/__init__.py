@@ -216,7 +216,6 @@ class Panda:
   FLAG_HYUNDAI_LFA_BTN = 256
   FLAG_HYUNDAI_ESCC = 512
   FLAG_HYUNDAI_NON_SCC = 1024
-  FLAG_HYUNDAI_UPSTREAM_TACO = 2048
 
   FLAG_TESLA_POWERTRAIN = 1
   FLAG_TESLA_LONG_CONTROL = 2
@@ -242,7 +241,6 @@ class Panda:
 
   FLAG_FORD_LONG_CONTROL = 1
   FLAG_FORD_CANFD = 2
-  FLAG_FORD_ENHANCED_LAT_CONTROL = 2048
 
   def __init__(self, serial: str | None = None, claim: bool = True, disable_checks: bool = True, can_speed_kbps: int = 500):
     self._connect_serial = serial

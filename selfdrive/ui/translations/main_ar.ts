@@ -1251,14 +1251,6 @@ Warning: You are on a metered connection!</source>
         <source>sunnypilot</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Update</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Updating...</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Reset</name>
@@ -2652,10 +2644,6 @@ This feature must be used along with SLC, and/or V-TSC, and/or M-TSC.</source>
     </message>
     <message>
         <source>Stock is recommended. In aggressive/maniac mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Planner Speed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

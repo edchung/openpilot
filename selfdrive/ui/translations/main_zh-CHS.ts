@@ -1268,14 +1268,6 @@ Warning: You are on a metered connection!</source>
         <source>now</source>
         <translation>现在</translation>
     </message>
-    <message>
-        <source>Update</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Updating...</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Reset</name>
@@ -2707,10 +2699,6 @@ This feature must be used along with SLC, and/or V-TSC, and/or M-TSC.</source>
     <message>
         <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.</source>
         <translation>驾驶可视化将在低速时过渡到面向道路的广角摄像头，以更好地显示某些转弯。实验模式标志也将显示在右上角。</translation>
-    </message>
-    <message>
-        <source>Use Planner Speed</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

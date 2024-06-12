@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum, IntFlag
 
 from cereal import car
-from panda.python import uds, Panda
+from panda.python import uds
 from openpilot.common.conversions import Conversions as CV
 from openpilot.selfdrive.car import CarSpecs, DbcDict, PlatformConfig, Platforms, dbc_dict
 from openpilot.selfdrive.car.docs_definitions import CarFootnote, CarHarness, CarDocs, CarParts, Column
@@ -16,7 +16,7 @@ class CarControllerParams:
   ACCEL_MIN = -3.5 # m/s
   ACCEL_MAX = 2.0 # m/s
 
-  def __init__(self, CP, vEgoRaw=100.):
+  def __init__(self, CP):
     self.STEER_DELTA_UP = 3
     self.STEER_DELTA_DOWN = 7
     self.STEER_DRIVER_ALLOWANCE = 50
@@ -26,13 +26,12 @@ class CarControllerParams:
     self.STEER_STEP = 1  # 100 Hz
 
     if CP.carFingerprint in CANFD_CAR:
-      upstream_taco = CP.safetyConfigs[-1].safetyParam & Panda.FLAG_HYUNDAI_UPSTREAM_TACO
-      self.STEER_MAX = 270 if not upstream_taco else 384 if vEgoRaw < 11. else 330
-      self.STEER_DRIVER_ALLOWANCE = 250 if not upstream_taco else 350
+      self.STEER_MAX = 270
+      self.STEER_DRIVER_ALLOWANCE = 250
       self.STEER_DRIVER_MULTIPLIER = 2
-      self.STEER_THRESHOLD = 250 if not upstream_taco else 350
-      self.STEER_DELTA_UP = 2 if not upstream_taco else 10 if vEgoRaw < 11. else 2
-      self.STEER_DELTA_DOWN = 3 if not upstream_taco else 10 if vEgoRaw < 11. else 3
+      self.STEER_THRESHOLD = 250
+      self.STEER_DELTA_UP = 2
+      self.STEER_DELTA_DOWN = 3
 
     # To determine the limit for your car, find the maximum value that the stock LKAS will request.
     # If the max stock LKAS request is <384, add your car to this list.
@@ -109,7 +108,6 @@ class HyundaiFlagsSP(IntFlag):
   SP_CAMERA_SCC_LEAD = 2 ** 6
   SP_LKAS12 = 2 ** 7
   SP_RADAR_TRACKS = 2 ** 8
-  SP_UPSTREAM_TACO = 2 ** 9
 
 
 class Footnote(Enum):
@@ -351,11 +349,6 @@ class CAR(Platforms):
     [HyundaiCarDocs("Hyundai Custin 2023", "All", car_parts=CarParts.common([CarHarness.hyundai_k]))],
     CarSpecs(mass=1690, wheelbase=3.055, steerRatio=17),  # mass: from https://www.hyundai-motor.com.tw/clicktobuy/custin#spec_0, steerRatio: from learner
     flags=HyundaiFlags.CHECKSUM_CRC8,
-  )
-  NEXO_2019 = HyundaiPlatformConfig(
-    [HyundaiCarDocs("Hyundai Nexo 2019", "All", car_parts=CarParts.common([CarHarness.hyundai_h]))],
-    CarSpecs(mass=1867, wheelbase=2.79, steerRatio=14.19),  #https://www.hyundainews.com/assets/documents/original/34407-2019NexoSpecificationsPPApprovedwRange10518.pdf
-    flags=HyundaiFlags.EV,
   )
 
   # Kia
