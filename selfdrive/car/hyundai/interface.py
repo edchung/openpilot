@@ -186,6 +186,11 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 2205.
       ret.wheelbase = 3.273
       ret.steerRatio = 11.94  # https://www.hyundai.com/content/dam/hyundai/au/en/models/staria-load/premium-pip-update-2023/spec-sheet/STARIA_Load_Spec-Table_March_2023_v3.1.pdf
+    elif candidate == CAR.NEXO_2019:
+      ret.mass = 1867. #https://www.hyundainews.com/assets/documents/original/34407-2019NexoSpecificationsPPApprovedwRange10518.pdf
+      ret.wheelbase = 2.79
+      ret.steerRatio = 14.19
+      tire_stiffness_factor = 0.385
 
     # Kia
     elif candidate == CAR.KIA_SORENTO:
