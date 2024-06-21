@@ -4,7 +4,7 @@ from openpilot.selfdrive.car.subaru.values import CAR
 Ecu = car.CarParams.Ecu
 
 FW_VERSIONS = {
-  CAR.SUBARU_ASCENT: {
+  CAR.ASCENT: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa5 \x19\x02\x00',
       b'\xa5 !\x02\x00',
@@ -26,14 +26,13 @@ FW_VERSIONS = {
       b'\xd1,\xa0q\x07',
     ],
     (Ecu.transmission, 0x7e1, None): [
-      b'\x00>\xf0\x00\x00',
       b'\x00\xfe\xf7\x00\x00',
       b'\x01\xfe\xf7\x00\x00',
       b'\x01\xfe\xf9\x00\x00',
       b'\x01\xfe\xfa\x00\x00',
     ],
   },
-  CAR.SUBARU_ASCENT_2023: {
+  CAR.ASCENT_2023: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa5 #\x03\x00',
     ],
@@ -50,7 +49,7 @@ FW_VERSIONS = {
       b'\x04\xfe\xf3\x00\x00',
     ],
   },
-  CAR.SUBARU_LEGACY: {
+  CAR.LEGACY: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa1  \x02\x01',
       b'\xa1  \x02\x02',
@@ -78,7 +77,7 @@ FW_VERSIONS = {
       b'\xa7\xfe\xc4@\x00',
     ],
   },
-  CAR.SUBARU_IMPREZA: {
+  CAR.IMPREZA: {
     (Ecu.abs, 0x7b0, None): [
       b'z\x84\x19\x90\x00',
       b'z\x94\x08\x90\x00',
@@ -149,7 +148,6 @@ FW_VERSIONS = {
       b'\xe3\xf5C\x00\x00',
       b'\xe3\xf5F\x00\x00',
       b'\xe3\xf5G\x00\x00',
-      b'\xe4\xe5\x021\x00',
       b'\xe4\xe5\x061\x00',
       b'\xe4\xf5\x02\x00\x00',
       b'\xe4\xf5\x07\x00\x00',
@@ -158,7 +156,7 @@ FW_VERSIONS = {
       b'\xe5\xf5B\x00\x00',
     ],
   },
-  CAR.SUBARU_IMPREZA_2020: {
+  CAR.IMPREZA_2020: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa2 \x193\x00',
       b'\xa2 \x194\x00',
@@ -197,7 +195,6 @@ FW_VERSIONS = {
       b'\xe6"fp\x07',
       b'\xf3"f@\x07',
       b'\xf3"fp\x07',
-      b'\xf3"fr\x07',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xe6\xf5\x04\x00\x00',
@@ -212,7 +209,7 @@ FW_VERSIONS = {
       b'\xe9\xf6F0\x00',
     ],
   },
-  CAR.SUBARU_CROSSTREK_HYBRID: {
+  CAR.CROSSTREK_HYBRID: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa2 \x19e\x01',
       b'\xa2 !e\x01',
@@ -230,13 +227,12 @@ FW_VERSIONS = {
       b'\xf4!`0\x07',
     ],
   },
-  CAR.SUBARU_FORESTER: {
+  CAR.FORESTER: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa3 \x18\x14\x00',
       b'\xa3 \x18&\x00',
       b'\xa3 \x19\x14\x00',
       b'\xa3 \x19&\x00',
-      b'\xa3 \x19h\x00',
       b'\xa3  \x14\x00',
       b'\xa3  \x14\x01',
     ],
@@ -249,7 +245,6 @@ FW_VERSIONS = {
       b'\x00\x00e!\x1f@ \x11',
       b'\x00\x00e^\x00\x00\x00\x00',
       b'\x00\x00e^\x1f@ !',
-      b'\x00\x00e`\x00\x00\x00\x00',
       b'\x00\x00e`\x1f@  ',
       b'\x00\x00e\x97\x00\x00\x00\x00',
       b'\x00\x00e\x97\x1f@ 0',
@@ -270,10 +265,9 @@ FW_VERSIONS = {
       b'\x1a\xf6F`\x00',
       b'\x1a\xf6b0\x00',
       b'\x1a\xf6b`\x00',
-      b'\x1a\xf6f`\x00',
     ],
   },
-  CAR.SUBARU_FORESTER_HYBRID: {
+  CAR.FORESTER_HYBRID: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa3 \x19T\x00',
     ],
@@ -290,7 +284,7 @@ FW_VERSIONS = {
       b'\x1b\xa7@a\x00',
     ],
   },
-  CAR.SUBARU_FORESTER_PREGLOBAL: {
+  CAR.FORESTER_PREGLOBAL: {
     (Ecu.abs, 0x7b0, None): [
       b'm\x97\x14@',
       b'}\x97\x14@',
@@ -321,7 +315,7 @@ FW_VERSIONS = {
       b'\xdc\xf2`\x81\x00',
     ],
   },
-  CAR.SUBARU_LEGACY_PREGLOBAL: {
+  CAR.LEGACY_PREGLOBAL: {
     (Ecu.abs, 0x7b0, None): [
       b'[\x97D\x00',
       b'[\xba\xc4\x03',
@@ -354,7 +348,7 @@ FW_VERSIONS = {
       b'\xbf\xfb\xc0\x80\x00',
     ],
   },
-  CAR.SUBARU_OUTBACK_PREGLOBAL: {
+  CAR.OUTBACK_PREGLOBAL: {
     (Ecu.abs, 0x7b0, None): [
       b'[\xba\xac\x03',
       b'[\xf7\xac\x00',
@@ -407,7 +401,7 @@ FW_VERSIONS = {
       b'\xbf\xfb\xe0b\x00',
     ],
   },
-  CAR.SUBARU_OUTBACK_PREGLOBAL_2018: {
+  CAR.OUTBACK_PREGLOBAL_2018: {
     (Ecu.abs, 0x7b0, None): [
       b'\x8b\x97\xac\x00',
       b'\x8b\x97\xbc\x00',
@@ -450,7 +444,7 @@ FW_VERSIONS = {
       b'\xbc\xfb\xe0\x80\x00',
     ],
   },
-  CAR.SUBARU_OUTBACK: {
+  CAR.OUTBACK: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa1  \x06\x00',
       b'\xa1  \x06\x01',
@@ -499,7 +493,7 @@ FW_VERSIONS = {
       b'\xa7\xfe\xf4@\x00',
     ],
   },
-  CAR.SUBARU_FORESTER_2022: {
+  CAR.FORESTER_2022: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa3 !v\x00',
       b'\xa3 !x\x00',
@@ -532,7 +526,7 @@ FW_VERSIONS = {
       b'\x1e\xf6D0\x00',
     ],
   },
-  CAR.SUBARU_OUTBACK_2023: {
+  CAR.OUTBACK_2023: {
     (Ecu.abs, 0x7b0, None): [
       b'\xa1 #\x14\x00',
       b'\xa1 #\x17\x00',

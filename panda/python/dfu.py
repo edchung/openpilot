@@ -2,6 +2,7 @@ import os
 import usb1
 import struct
 import binascii
+from typing import List, Optional
 
 from .base import BaseSTBootloaderHandle
 from .spi import STBootloaderSPIHandle, PandaSpiException
@@ -10,9 +11,9 @@ from .constants import FW_PATH, McuType
 
 
 class PandaDFU:
-  def __init__(self, dfu_serial: str | None):
+  def __init__(self, dfu_serial: Optional[str]):
     # try USB, then SPI
-    handle: BaseSTBootloaderHandle | None
+    handle: Optional[BaseSTBootloaderHandle]
     self._context, handle = PandaDFU.usb_connect(dfu_serial)
     if handle is None:
       self._context, handle = PandaDFU.spi_connect(dfu_serial)
@@ -37,7 +38,7 @@ class PandaDFU:
         self._context.close()
 
   @staticmethod
-  def usb_connect(dfu_serial: str | None):
+  def usb_connect(dfu_serial: Optional[str]):
     handle = None
     context = usb1.USBContext()
     context.open()
@@ -55,7 +56,7 @@ class PandaDFU:
     return context, handle
 
   @staticmethod
-  def spi_connect(dfu_serial: str | None):
+  def spi_connect(dfu_serial: Optional[str]):
     handle = None
     this_dfu_serial = None
 
@@ -71,7 +72,13 @@ class PandaDFU:
     return None, handle
 
   @staticmethod
-  def usb_list() -> list[str]:
+  def list() -> List[str]:
+    ret = PandaDFU.usb_list()
+    ret += PandaDFU.spi_list()
+    return list(set(ret))
+
+  @staticmethod
+  def usb_list() -> List[str]:
     dfu_serials = []
     try:
       with usb1.USBContext() as context:
@@ -86,7 +93,7 @@ class PandaDFU:
     return dfu_serials
 
   @staticmethod
-  def spi_list() -> list[str]:
+  def spi_list() -> List[str]:
     try:
       _, h = PandaDFU.spi_connect(None)
       if h is not None:
@@ -127,9 +134,3 @@ class PandaDFU:
       code = f.read()
     self.program_bootstub(code)
     self.reset()
-
-  @staticmethod
-  def list() -> list[str]:
-    ret = PandaDFU.usb_list()
-    ret += PandaDFU.spi_list()
-    return list(set(ret))

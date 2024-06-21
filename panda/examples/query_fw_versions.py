@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+from typing import List, Optional
 from tqdm import tqdm
 from panda import Panda
 from panda.python.uds import UdsClient, MessageTimeoutError, NegativeResponseError, InvalidSubAddressError, \
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     addrs += [0x18da0000 + (i << 8) + 0xf1 for i in range(256)]
   results = {}
 
-  sub_addrs: list[int | None] = [None]
+  sub_addrs: List[Optional[int]] = [None]
   if args.sub_addr:
     if args.sub_addr == "scan":
       sub_addrs = list(range(0xff + 1))

@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 import av
 from teleoprtc.tracks import TiciVideoStreamTrack
@@ -39,5 +40,5 @@ class LiveStreamVideoStreamTrack(TiciVideoStreamTrack):
 
     return packet
 
-  def codec_preference(self) -> str | None:
+  def codec_preference(self) -> Optional[str]:
     return "H264"

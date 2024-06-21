@@ -14,7 +14,7 @@ from common.params import Params
 from openpilot.selfdrive.mapd_manager import COMMON_DIR, MAPD_PATH, MAPD_BIN_DIR
 from openpilot.system.version import is_prebuilt
 
-VERSION = 'v1.9.0'
+VERSION = 'v1.8.0'
 URL = f"https://github.com/pfeiferj/openpilot-mapd/releases/download/{VERSION}/mapd"
 
 
@@ -139,4 +139,5 @@ if __name__ == "__main__":
     install_manager.update_installed_version(VERSION)
   else:
     spinner.update(f"Checking if mapd is installed and valid. Prebuilt [{is_prebuilt()}]")
+    time.sleep(1)
     install_manager.non_prebuilt_install()

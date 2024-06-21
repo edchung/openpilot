@@ -3,7 +3,6 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include <QDateTime>
 #include <QFutureSynchronizer>
@@ -15,8 +14,7 @@
 struct RouteIdentifier {
   QString dongle_id;
   QString timestamp;
-  int begin_segment = 0;
-  int end_segment = -1;
+  int segment_id;
   QString str;
 };
 
@@ -43,7 +41,7 @@ public:
 
 protected:
   bool loadFromLocal();
-  bool loadFromServer(int retries = 3);
+  bool loadFromServer();
   bool loadFromJson(const QString &json);
   void addFileToSegment(int seg_num, const QString &file);
   RouteIdentifier route_ = {};
@@ -56,7 +54,7 @@ class Segment : public QObject {
   Q_OBJECT
 
 public:
-  Segment(int n, const SegmentFile &files, uint32_t flags, const std::vector<bool> &filters = {});
+  Segment(int n, const SegmentFile &files, uint32_t flags);
   ~Segment();
   inline bool isLoaded() const { return !loading_ && !abort_; }
 
@@ -74,5 +72,4 @@ protected:
   std::atomic<int> loading_ = 0;
   QFutureSynchronizer<void> synchronizer_;
   uint32_t flags;
-  std::vector<bool> filters_;
 };

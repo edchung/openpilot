@@ -1,9 +1,10 @@
 import os
 import errno
+from typing import Dict, Optional, Tuple
 
-_cached_attributes: dict[tuple, bytes | None] = {}
+_cached_attributes: Dict[Tuple, Optional[bytes]] = {}
 
-def getxattr(path: str, attr_name: str) -> bytes | None:
+def getxattr(path: str, attr_name: str) -> Optional[bytes]:
   key = (path, attr_name)
   if key not in _cached_attributes:
     try:

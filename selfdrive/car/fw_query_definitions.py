@@ -3,16 +3,16 @@ import capnp
 import copy
 from dataclasses import dataclass, field
 import struct
-from collections.abc import Callable
+from typing import Callable, Dict, List, Optional, Set, Tuple
 
 import panda.python.uds as uds
 
-AddrType = tuple[int, int | None]
-EcuAddrBusType = tuple[int, int | None, int]
-EcuAddrSubAddr = tuple[int, int, int | None]
+AddrType = Tuple[int, Optional[int]]
+EcuAddrBusType = Tuple[int, Optional[int], int]
+EcuAddrSubAddr = Tuple[int, int, Optional[int]]
 
-LiveFwVersions = dict[AddrType, set[bytes]]
-OfflineFwVersions = dict[str, dict[EcuAddrSubAddr, list[bytes]]]
+LiveFwVersions = Dict[AddrType, Set[bytes]]
+OfflineFwVersions = Dict[str, Dict[EcuAddrSubAddr, List[bytes]]]
 
 # A global list of addresses we will only ever consider for VIN responses
 # engine, hybrid controller, Ford abs, Hyundai CAN FD cluster, 29-bit engine, PGM-FI
@@ -47,11 +47,6 @@ class StdQueries:
   MANUFACTURER_SOFTWARE_VERSION_RESPONSE = bytes([uds.SERVICE_TYPE.READ_DATA_BY_IDENTIFIER + 0x40]) + \
     p16(uds.DATA_IDENTIFIER_TYPE.VEHICLE_MANUFACTURER_ECU_SOFTWARE_NUMBER)
 
-  SUPPLIER_SOFTWARE_VERSION_REQUEST = bytes([uds.SERVICE_TYPE.READ_DATA_BY_IDENTIFIER]) + \
-    p16(uds.DATA_IDENTIFIER_TYPE.SYSTEM_SUPPLIER_ECU_SOFTWARE_VERSION_NUMBER)
-  SUPPLIER_SOFTWARE_VERSION_RESPONSE = bytes([uds.SERVICE_TYPE.READ_DATA_BY_IDENTIFIER + 0x40]) + \
-    p16(uds.DATA_IDENTIFIER_TYPE.SYSTEM_SUPPLIER_ECU_SOFTWARE_VERSION_NUMBER)
-
   UDS_VERSION_REQUEST = bytes([uds.SERVICE_TYPE.READ_DATA_BY_IDENTIFIER]) + \
     p16(uds.DATA_IDENTIFIER_TYPE.APPLICATION_SOFTWARE_IDENTIFICATION)
   UDS_VERSION_RESPONSE = bytes([uds.SERVICE_TYPE.READ_DATA_BY_IDENTIFIER + 0x40]) + \
@@ -76,9 +71,9 @@ class StdQueries:
 
 @dataclass
 class Request:
-  request: list[bytes]
-  response: list[bytes]
-  whitelist_ecus: list[int] = field(default_factory=list)
+  request: List[bytes]
+  response: List[bytes]
+  whitelist_ecus: List[int] = field(default_factory=list)
   rx_offset: int = 0x8
   bus: int = 1
   # Whether this query should be run on the first auxiliary panda (CAN FD cars for example)
@@ -91,15 +86,15 @@ class Request:
 
 @dataclass
 class FwQueryConfig:
-  requests: list[Request]
+  requests: List[Request]
   # TODO: make this automatic and remove hardcoded lists, or do fingerprinting with ecus
   # Overrides and removes from essential ecus for specific models and ecus (exact matching)
-  non_essential_ecus: dict[capnp.lib.capnp._EnumModule, list[str]] = field(default_factory=dict)
+  non_essential_ecus: Dict[capnp.lib.capnp._EnumModule, List[str]] = field(default_factory=dict)
   # Ecus added for data collection, not to be fingerprinted on
-  extra_ecus: list[tuple[capnp.lib.capnp._EnumModule, int, int | None]] = field(default_factory=list)
-  # Function a brand can implement to provide better fuzzy matching. Takes in FW versions and VIN,
+  extra_ecus: List[Tuple[capnp.lib.capnp._EnumModule, int, Optional[int]]] = field(default_factory=list)
+  # Function a brand can implement to provide better fuzzy matching. Takes in FW versions,
   # returns set of candidates. Only will match if one candidate is returned
-  match_fw_to_car_fuzzy: Callable[[LiveFwVersions, str, OfflineFwVersions], set[str]] | None = None
+  match_fw_to_car_fuzzy: Optional[Callable[[LiveFwVersions, OfflineFwVersions], Set[str]]] = None
 
   def __post_init__(self):
     for i in range(len(self.requests)):

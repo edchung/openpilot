@@ -6,9 +6,8 @@ from openpilot.common.conversions import Conversions as CV
 from openpilot.common.params import Params
 from openpilot.common.realtime import DT_CTRL
 from openpilot.selfdrive.car import apply_driver_steer_torque_limits
-from openpilot.selfdrive.car.interfaces import CarControllerBase
 from openpilot.selfdrive.car.volkswagen import mqbcan, pqcan
-from openpilot.selfdrive.car.volkswagen.values import CANBUS, CarControllerParams, VolkswagenFlags
+from openpilot.selfdrive.car.volkswagen.values import CANBUS, PQ_CARS, CarControllerParams, VolkswagenFlags
 from openpilot.selfdrive.controls.lib.drive_helpers import VOLKSWAGEN_V_CRUISE_MIN
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
@@ -16,13 +15,12 @@ LongCtrlState = car.CarControl.Actuators.LongControlState
 ButtonType = car.CarState.ButtonEvent.Type
 
 
-class CarController(CarControllerBase):
+class CarController:
   def __init__(self, dbc_name, CP, VM):
     self.CP = CP
     self.CCP = CarControllerParams(CP)
-    self.CCS = pqcan if CP.flags & VolkswagenFlags.PQ else mqbcan
+    self.CCS = pqcan if CP.carFingerprint in PQ_CARS else mqbcan
     self.packer_pt = CANPacker(dbc_name)
-    self.ext_bus = CANBUS.pt if CP.networkLocation == car.CarParams.NetworkLocation.fwdCamera else CANBUS.cam
 
     self.apply_steer_last = 0
     self.gra_acc_counter_last = None
@@ -66,7 +64,7 @@ class CarController(CarControllerBase):
     self.acc_type = -1
     self.send_count = 0
 
-  def update(self, CC, CS, now_nanos):
+  def update(self, CC, CS, ext_bus, now_nanos):
     if not self.CP.pcmCruiseSpeed:
       self.sm.update(0)
 
@@ -161,7 +159,7 @@ class CarController(CarControllerBase):
       hud_alert = 0
       if hud_control.visualAlert in (VisualAlert.steerRequired, VisualAlert.ldw):
         hud_alert = self.CCP.LDW_MESSAGES["laneAssistTakeOver"]
-      can_sends.append(self.CCS.create_lka_hud_control(self.packer_pt, CANBUS.pt, CS.ldw_stock_values, CC.latActive,
+      can_sends.append(self.CCS.create_lka_hud_control(self.packer_pt, CANBUS.pt, CS.ldw_stock_values, CC.enabled, CC.latActive,
                                                        CS.out.steeringPressed, hud_alert, hud_control))
 
     if self.frame % self.CCP.ACC_HUD_STEP == 0 and self.CP.openpilotLongitudinalControl:
@@ -172,13 +170,13 @@ class CarController(CarControllerBase):
       # FIXME: follow the recent displayed-speed updates, also use mph_kmh toggle to fix display rounding problem?
       set_speed = hud_control.setSpeed * CV.MS_TO_KPH
       can_sends.append(self.CCS.create_acc_hud_control(self.packer_pt, CANBUS.pt, acc_hud_status, set_speed,
-                                                       lead_distance, hud_control.leadDistanceBars))
+                                                       lead_distance, CS.gac_tr_cluster))
 
     # **** Stock ACC Button Controls **************************************** #
 
     gra_send_ready = self.CP.pcmCruise and CS.gra_stock_values["COUNTER"] != self.gra_acc_counter_last
     if gra_send_ready and (CC.cruiseControl.cancel or CC.cruiseControl.resume):
-      can_sends.append(self.CCS.create_acc_buttons_control(self.packer_pt, self.ext_bus, CS.gra_stock_values,
+      can_sends.append(self.CCS.create_acc_buttons_control(self.packer_pt, ext_bus, CS.gra_stock_values,
                                                            cancel=CC.cruiseControl.cancel, resume=CC.cruiseControl.resume))
     if not (CC.cruiseControl.cancel or CC.cruiseControl.resume) and CS.out.cruiseState.enabled:
       if not self.CP.pcmCruiseSpeed:
@@ -195,7 +193,7 @@ class CarController(CarControllerBase):
           elif self.acc_type == 1:
             self.cruise_button = 3 if self.cruise_button == 1 else 4  # resume, set
           if self.frame % self.CCP.BTN_STEP == 0:
-            can_sends.append(self.CCS.create_acc_buttons_control(self.packer_pt, CS.gra_stock_values, frame=(self.frame // self.CCP.BTN_STEP),
+            can_sends.append(self.CCS.create_acc_buttons_control(self.packer_pt, ext_bus, CS.gra_stock_values, frame=(self.frame // self.CCP.BTN_STEP),
                                                                  buttons=self.cruise_button, custom_stock_long=True))
             self.send_count += 1
         else:
@@ -209,7 +207,7 @@ class CarController(CarControllerBase):
     self.gra_acc_counter_last = CS.gra_stock_values["COUNTER"]
     self.v_set_dis_prev = self.v_set_dis
     self.frame += 1
-    return new_actuators, can_sends
+    return new_actuators, can_sends, self.eps_timer_soft_disable_alert
 
   # multikyd methods, sunnyhaibin logic
   def get_cruise_buttons_status(self, CS):

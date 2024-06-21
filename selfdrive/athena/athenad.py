@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import platform
 import base64
 import bz2
 import hashlib
@@ -20,8 +19,7 @@ from dataclasses import asdict, dataclass, replace
 from datetime import datetime
 from functools import partial
 from queue import Queue
-from typing import cast
-from collections.abc import Callable
+from typing import Callable, Dict, List, Optional, Set, Union, cast
 
 import requests
 from jsonrpc import JSONRPCResponseManager, dispatcher
@@ -38,7 +36,7 @@ from openpilot.common.realtime import set_core_affinity
 from openpilot.system.hardware import HARDWARE, PC
 from openpilot.system.loggerd.xattr_cache import getxattr, setxattr
 from openpilot.common.swaglog import cloudlog
-from openpilot.system.version import get_build_metadata
+from openpilot.system.version import get_commit, get_normalized_origin, get_short_branch, get_version
 from openpilot.system.hardware.hw import Paths
 
 
@@ -57,17 +55,17 @@ WS_FRAME_SIZE = 4096
 
 NetworkType = log.DeviceState.NetworkType
 
-UploadFileDict = dict[str, str | int | float | bool]
-UploadItemDict = dict[str, str | bool | int | float | dict[str, str]]
+UploadFileDict = Dict[str, Union[str, int, float, bool]]
+UploadItemDict = Dict[str, Union[str, bool, int, float, Dict[str, str]]]
 
-UploadFilesToUrlResponse = dict[str, int | list[UploadItemDict] | list[str]]
+UploadFilesToUrlResponse = Dict[str, Union[int, List[UploadItemDict], List[str]]]
 
 
 @dataclass
 class UploadFile:
   fn: str
   url: str
-  headers: dict[str, str]
+  headers: Dict[str, str]
   allow_cellular: bool
 
   @classmethod
@@ -79,9 +77,9 @@ class UploadFile:
 class UploadItem:
   path: str
   url: str
-  headers: dict[str, str]
+  headers: Dict[str, str]
   created_at: int
-  id: str | None
+  id: Optional[str]
   retry_count: int = 0
   current: bool = False
   progress: float = 0
@@ -99,9 +97,9 @@ send_queue: Queue[str] = queue.Queue()
 upload_queue: Queue[UploadItem] = queue.Queue()
 low_priority_send_queue: Queue[str] = queue.Queue()
 log_recv_queue: Queue[str] = queue.Queue()
-cancelled_uploads: set[str] = set()
+cancelled_uploads: Set[str] = set()
 
-cur_upload_items: dict[int, UploadItem | None] = {}
+cur_upload_items: Dict[int, Optional[UploadItem]] = {}
 
 
 def strip_bz2_extension(fn: str) -> str:
@@ -129,14 +127,14 @@ class UploadQueueCache:
   @staticmethod
   def cache(upload_queue: Queue[UploadItem]) -> None:
     try:
-      queue: list[UploadItem | None] = list(upload_queue.queue)
+      queue: List[Optional[UploadItem]] = list(upload_queue.queue)
       items = [asdict(i) for i in queue if i is not None and (i.id not in cancelled_uploads)]
       Params().put("AthenadUploadQueue", json.dumps(items))
     except Exception:
       cloudlog.exception("athena.UploadQueueCache.cache.exception")
 
 
-def handle_long_poll(ws: WebSocket, exit_event: threading.Event | None) -> None:
+def handle_long_poll(ws: WebSocket, exit_event: Optional[threading.Event]) -> None:
   end_event = threading.Event()
 
   threads = [
@@ -280,7 +278,7 @@ def upload_handler(end_event: threading.Event) -> None:
       cloudlog.exception("athena.upload_handler.exception")
 
 
-def _do_upload(upload_item: UploadItem, callback: Callable = None) -> requests.Response:
+def _do_upload(upload_item: UploadItem, callback: Optional[Callable] = None) -> requests.Response:
   path = upload_item.path
   compress = False
 
@@ -319,18 +317,17 @@ def getMessage(service: str, timeout: int = 1000) -> dict:
 
 
 @dispatcher.add_method
-def getVersion() -> dict[str, str]:
-  build_metadata = get_build_metadata()
+def getVersion() -> Dict[str, str]:
   return {
-    "version": build_metadata.openpilot.version,
-    "remote": build_metadata.openpilot.git_normalized_origin,
-    "branch": build_metadata.channel,
-    "commit": build_metadata.openpilot.git_commit,
+    "version": get_version(),
+    "remote": get_normalized_origin(),
+    "branch": get_short_branch(),
+    "commit": get_commit(),
   }
 
 
 @dispatcher.add_method
-def setNavDestination(latitude: int = 0, longitude: int = 0, place_name: str = None, place_details: str = None) -> dict[str, int]:
+def setNavDestination(latitude: int = 0, longitude: int = 0, place_name: Optional[str] = None, place_details: Optional[str] = None) -> Dict[str, int]:
   destination = {
     "latitude": latitude,
     "longitude": longitude,
@@ -342,7 +339,7 @@ def setNavDestination(latitude: int = 0, longitude: int = 0, place_name: str = N
   return {"success": 1}
 
 
-def scan_dir(path: str, prefix: str) -> list[str]:
+def scan_dir(path: str, prefix: str) -> List[str]:
   files = []
   # only walk directories that match the prefix
   # (glob and friends traverse entire dir tree)
@@ -362,12 +359,12 @@ def scan_dir(path: str, prefix: str) -> list[str]:
   return files
 
 @dispatcher.add_method
-def listDataDirectory(prefix='') -> list[str]:
+def listDataDirectory(prefix='') -> List[str]:
   return scan_dir(Paths.log_root(), prefix)
 
 
 @dispatcher.add_method
-def uploadFileToUrl(fn: str, url: str, headers: dict[str, str]) -> UploadFilesToUrlResponse:
+def uploadFileToUrl(fn: str, url: str, headers: Dict[str, str]) -> UploadFilesToUrlResponse:
   # this is because mypy doesn't understand that the decorator doesn't change the return type
   response: UploadFilesToUrlResponse = uploadFilesToUrls([{
     "fn": fn,
@@ -378,11 +375,11 @@ def uploadFileToUrl(fn: str, url: str, headers: dict[str, str]) -> UploadFilesTo
 
 
 @dispatcher.add_method
-def uploadFilesToUrls(files_data: list[UploadFileDict]) -> UploadFilesToUrlResponse:
+def uploadFilesToUrls(files_data: List[UploadFileDict]) -> UploadFilesToUrlResponse:
   files = map(UploadFile.from_dict, files_data)
 
-  items: list[UploadItemDict] = []
-  failed: list[str] = []
+  items: List[UploadItemDict] = []
+  failed: List[str] = []
   for file in files:
     if len(file.fn) == 0 or file.fn[0] == '/' or '..' in file.fn or len(file.url) == 0:
       failed.append(file.fn)
@@ -421,13 +418,13 @@ def uploadFilesToUrls(files_data: list[UploadFileDict]) -> UploadFilesToUrlRespo
 
 
 @dispatcher.add_method
-def listUploadQueue() -> list[UploadItemDict]:
+def listUploadQueue() -> List[UploadItemDict]:
   items = list(upload_queue.queue) + list(cur_upload_items.values())
   return [asdict(i) for i in items if (i is not None) and (i.id not in cancelled_uploads)]
 
 
 @dispatcher.add_method
-def cancelUpload(upload_id: str | list[str]) -> dict[str, int | str]:
+def cancelUpload(upload_id: Union[str, List[str]]) -> Dict[str, Union[int, str]]:
   if not isinstance(upload_id, list):
     upload_id = [upload_id]
 
@@ -440,7 +437,7 @@ def cancelUpload(upload_id: str | list[str]) -> dict[str, int | str]:
   return {"success": 1}
 
 @dispatcher.add_method
-def setRouteViewed(route: str) -> dict[str, int | str]:
+def setRouteViewed(route: str) -> Dict[str, Union[int, str]]:
   # maintain a list of the last 10 routes viewed in connect
   params = Params()
 
@@ -455,7 +452,7 @@ def setRouteViewed(route: str) -> dict[str, int | str]:
   return {"success": 1}
 
 
-def startLocalProxy(global_end_event: threading.Event, remote_ws_uri: str, local_port: int) -> dict[str, int]:
+def startLocalProxy(global_end_event: threading.Event, remote_ws_uri: str, local_port: int) -> Dict[str, int]:
   try:
     if local_port not in LOCAL_PORT_WHITELIST:
       raise Exception("Requested local port not whitelisted")
@@ -467,10 +464,6 @@ def startLocalProxy(global_end_event: threading.Event, remote_ws_uri: str, local
     ws = create_connection(remote_ws_uri,
                            cookie="jwt=" + identity_token,
                            enable_multithread=True)
-
-    # Set TOS to keep connection responsive while under load.
-    # DSCP of 36/HDD_LINUX_AC_VI with the minimum delay flag
-    ws.sock.setsockopt(socket.IPPROTO_IP, socket.IP_TOS, 0x90)
 
     ssock, csock = socket.socketpair()
     local_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -493,7 +486,7 @@ def startLocalProxy(global_end_event: threading.Event, remote_ws_uri: str, local
 
 
 @dispatcher.add_method
-def getPublicKey() -> str | None:
+def getPublicKey() -> Optional[str]:
   if not os.path.isfile(Paths.persist_root() + '/comma/id_rsa.pub'):
     return None
 
@@ -533,7 +526,7 @@ def getNetworks():
 
 
 @dispatcher.add_method
-def takeSnapshot() -> str | dict[str, str] | None:
+def takeSnapshot() -> Optional[Union[str, Dict[str, str]]]:
   from openpilot.system.camerad.snapshot.snapshot import jpeg_write, snapshot
   ret = snapshot()
   if ret is not None:
@@ -550,7 +543,7 @@ def takeSnapshot() -> str | dict[str, str] | None:
     raise Exception("not available while camerad is started")
 
 
-def get_logs_to_send_sorted() -> list[str]:
+def get_logs_to_send_sorted() -> List[str]:
   # TODO: scan once then use inotify to detect file creation/deletion
   curr_time = int(time.time())
   logs = []
@@ -662,12 +655,10 @@ def stat_handler(end_event: threading.Event) -> None:
 def ws_proxy_recv(ws: WebSocket, local_sock: socket.socket, ssock: socket.socket, end_event: threading.Event, global_end_event: threading.Event) -> None:
   while not (end_event.is_set() or global_end_event.is_set()):
     try:
-      r = select.select((ws.sock,), (), (), 30)
-      if r[0]:
-        data = ws.recv()
-        if isinstance(data, str):
-          data = data.encode("utf-8")
-        local_sock.sendall(data)
+      data = ws.recv()
+      if isinstance(data, str):
+        data = data.encode("utf-8")
+      local_sock.sendall(data)
     except WebSocketTimeoutException:
       pass
     except Exception:
@@ -677,7 +668,6 @@ def ws_proxy_recv(ws: WebSocket, local_sock: socket.socket, ssock: socket.socket
   cloudlog.debug("athena.ws_proxy_recv closing sockets")
   ssock.close()
   local_sock.close()
-  ws.close()
   cloudlog.debug("athena.ws_proxy_recv done closing sockets")
 
   end_event.set()
@@ -760,15 +750,11 @@ def ws_manage(ws: WebSocket, end_event: threading.Event) -> None:
       onroad_prev = onroad
 
       if sock is not None:
-        if platform.system() == 'Darwin':  # macOS
-          sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-          sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPALIVE, 7 if onroad else 30)
-        else:
-          # While not sending data, onroad, we can expect to time out in 7 + (7 * 2) = 21s
-          #                         offroad, we can expect to time out in 30 + (10 * 3) = 60s
-          # FIXME: TCP_USER_TIMEOUT is effectively 2x for some reason (32s), so it's mostly unused
-          sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_USER_TIMEOUT, 16000 if onroad else 0)
-          sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 7 if onroad else 30)
+        # While not sending data, onroad, we can expect to time out in 7 + (7 * 2) = 21s
+        #                         offroad, we can expect to time out in 30 + (10 * 3) = 60s
+        # FIXME: TCP_USER_TIMEOUT is effectively 2x for some reason (32s), so it's mostly unused
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_USER_TIMEOUT, 16000 if onroad else 0)
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 7 if onroad else 30)
         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 7 if onroad else 10)
         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 2 if onroad else 3)
 
@@ -780,7 +766,7 @@ def backoff(retries: int) -> int:
   return random.randrange(0, min(128, int(2 ** retries)))
 
 
-def main(exit_event: threading.Event = None):
+def main(exit_event: Optional[threading.Event] = None):
   try:
     set_core_affinity([0, 1, 2, 3])
   except Exception:

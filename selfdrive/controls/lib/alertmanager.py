@@ -3,6 +3,7 @@ import os
 import json
 from collections import defaultdict
 from dataclasses import dataclass
+from typing import List, Dict, Optional
 
 from openpilot.common.basedir import BASEDIR
 from openpilot.common.params import Params
@@ -13,7 +14,7 @@ with open(os.path.join(BASEDIR, "selfdrive/controls/lib/alerts_offroad.json")) a
   OFFROAD_ALERTS = json.load(f)
 
 
-def set_offroad_alert(alert: str, show_alert: bool, extra_text: str = None) -> None:
+def set_offroad_alert(alert: str, show_alert: bool, extra_text: Optional[str] = None) -> None:
   if show_alert:
     a = copy.copy(OFFROAD_ALERTS[alert])
     a['extra'] = extra_text or ''
@@ -24,7 +25,7 @@ def set_offroad_alert(alert: str, show_alert: bool, extra_text: str = None) -> N
 
 @dataclass
 class AlertEntry:
-  alert: Alert | None = None
+  alert: Optional[Alert] = None
   start_frame: int = -1
   end_frame: int = -1
 
@@ -33,9 +34,9 @@ class AlertEntry:
 
 class AlertManager:
   def __init__(self):
-    self.alerts: dict[str, AlertEntry] = defaultdict(AlertEntry)
+    self.alerts: Dict[str, AlertEntry] = defaultdict(AlertEntry)
 
-  def add_many(self, frame: int, alerts: list[Alert]) -> None:
+  def add_many(self, frame: int, alerts: List[Alert]) -> None:
     for alert in alerts:
       entry = self.alerts[alert.alert_type]
       entry.alert = alert
@@ -44,7 +45,7 @@ class AlertManager:
       min_end_frame = entry.start_frame + alert.duration
       entry.end_frame = max(frame + 1, min_end_frame)
 
-  def process_alerts(self, frame: int, clear_event_types: set) -> Alert | None:
+  def process_alerts(self, frame: int, clear_event_types: set) -> Optional[Alert]:
     current_alert = AlertEntry()
     for v in self.alerts.values():
       if not v.alert:

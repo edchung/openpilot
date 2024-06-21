@@ -8,7 +8,6 @@ from openpilot.common.swaglog import cloudlog
 from openpilot.selfdrive.modeld.constants import ModelConstants
 from openpilot.selfdrive.controls.lib.longitudinal_planner import LongitudinalPlanner
 from openpilot.selfdrive.controls.lib.lateral_planner import LateralPlanner
-from openpilot.selfdrive.modeld.model_capabilities import ModelCapabilities
 from openpilot.selfdrive.sunnypilot import get_model_generation
 import cereal.messaging as messaging
 
@@ -48,8 +47,7 @@ def plannerd_thread():
   longitudinal_planner = LongitudinalPlanner(CP)
 
   custom_model, model_gen = get_model_generation(params)
-  model_capabilities = ModelCapabilities.get_by_gen(model_gen)
-  model_use_lateral_planner = custom_model and model_capabilities & ModelCapabilities.LateralPlannerSolution
+  model_use_lateral_planner = custom_model and model_gen == 1
   lateral_planner = LateralPlanner(CP, debug=debug_mode, model_use_lateral_planner=model_use_lateral_planner)
   lateral_planner_svs = ['lateralPlanDEPRECATED', 'lateralPlanSPDEPRECATED']
 

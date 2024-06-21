@@ -1,5 +1,6 @@
 import asyncio
 import io
+from typing import Optional, List, Tuple
 
 import aiortc
 import av
@@ -16,7 +17,7 @@ class AudioInputStreamTrack(aiortc.mediastreams.AudioStreamTrack):
       pyaudio.paFloat32: 'flt',
   }
 
-  def __init__(self, audio_format: int = pyaudio.paInt16, rate: int = 16000, channels: int = 1, packet_time: float = 0.020, device_index: int = None):
+  def __init__(self, audio_format: int = pyaudio.paInt16, rate: int = 16000, channels: int = 1, packet_time: float = 0.020, device_index: Optional[int] = None):
     super().__init__()
 
     self.p = pyaudio.PyAudio()
@@ -48,7 +49,7 @@ class AudioInputStreamTrack(aiortc.mediastreams.AudioStreamTrack):
 
 
 class AudioOutputSpeaker:
-  def __init__(self, audio_format: int = pyaudio.paInt16, rate: int = 48000, channels: int = 2, packet_time: float = 0.2, device_index: int = None):
+  def __init__(self, audio_format: int = pyaudio.paInt16, rate: int = 48000, channels: int = 2, packet_time: float = 0.2, device_index: Optional[int] = None):
 
     chunk_size = int(packet_time * rate)
     self.p = pyaudio.PyAudio()
@@ -61,7 +62,7 @@ class AudioOutputSpeaker:
                               output=True,
                               output_device_index=device_index,
                               stream_callback=self.__pyaudio_callback)
-    self.tracks_and_tasks: list[tuple[aiortc.MediaStreamTrack, asyncio.Task | None]] = []
+    self.tracks_and_tasks: List[Tuple[aiortc.MediaStreamTrack, Optional[asyncio.Task]]] = []
 
   def __pyaudio_callback(self, in_data, frame_count, time_info, status):
     if self.buffer.getbuffer().nbytes < frame_count * self.channels * 2:

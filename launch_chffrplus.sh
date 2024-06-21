@@ -86,8 +86,7 @@ function launch {
   if [ ! -f $DIR/prebuilt ]; then
     ./build.py
   fi
-
-  ./sunnylink.py; ./mapd_installer.py; ./manager.py
+  ./mapd_installer.py && ./manager.py
 
   # if broken, keep on screen error
   while true; do sleep 1; done

@@ -1,5 +1,5 @@
 # mimic a python serial port
-class PandaSerial:
+class PandaSerial(object):
   def __init__(self, panda, port, baud):
     self.panda = panda
     self.port = port

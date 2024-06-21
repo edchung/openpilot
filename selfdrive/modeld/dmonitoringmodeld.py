@@ -6,6 +6,7 @@ import time
 import ctypes
 import numpy as np
 from pathlib import Path
+from typing import Tuple, Dict
 
 from cereal import messaging
 from cereal.messaging import PubMaster, SubMaster
@@ -52,7 +53,7 @@ class DMonitoringModelResult(ctypes.Structure):
     ("wheel_on_right_prob", ctypes.c_float)]
 
 class ModelState:
-  inputs: dict[str, np.ndarray]
+  inputs: Dict[str, np.ndarray]
   output: np.ndarray
   model: ModelRunner
 
@@ -67,7 +68,7 @@ class ModelState:
     self.model.addInput("input_img", None)
     self.model.addInput("calib", self.inputs['calib'])
 
-  def run(self, buf:VisionBuf, calib:np.ndarray) -> tuple[np.ndarray, float]:
+  def run(self, buf:VisionBuf, calib:np.ndarray) -> Tuple[np.ndarray, float]:
     self.inputs['calib'][:] = calib
 
     v_offset = buf.height - MODEL_HEIGHT

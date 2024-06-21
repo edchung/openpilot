@@ -8,7 +8,6 @@ from typing import NoReturn
 from timezonefinder import TimezoneFinder
 
 import cereal.messaging as messaging
-from openpilot.common.time import system_time_valid
 from openpilot.common.params import Params
 from openpilot.common.swaglog import cloudlog
 from openpilot.system.hardware import AGNOS
@@ -57,6 +56,7 @@ def main() -> NoReturn:
   """
 
   params = Params()
+  tf = TimezoneFinder()
 
   # Restore timezone from param
   tz = params.get("Timezone", encoding='utf8')
@@ -70,8 +70,7 @@ def main() -> NoReturn:
   while True:
     sm.update(1000)
 
-    msg = messaging.new_message('clocks')
-    msg.valid = system_time_valid()
+    msg = messaging.new_message('clocks', valid=True)
     msg.clocks.wallTimeNanos = time.time_ns()
     pm.send('clocks', msg)
 

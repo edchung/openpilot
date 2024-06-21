@@ -41,7 +41,6 @@ enum class DeviceType_9d5d7238eba86608: uint16_t {
   TICI,
   PC,
   TIZI,
-  MICI,
 };
 CAPNP_DECLARE_ENUM(DeviceType, 9d5d7238eba86608);
 CAPNP_DECLARE_SCHEMA(e673e8725cdff0ad);
@@ -99,7 +98,6 @@ enum class SensorSource_d3ff79f25c734863: uint16_t {
   UBLOX,
   TRIMBLE,
   QCOMDIAG,
-  UNICORE,
 };
 CAPNP_DECLARE_ENUM(SensorSource, d3ff79f25c734863);
 CAPNP_DECLARE_SCHEMA(ae674a34ba421466);
@@ -177,7 +175,7 @@ enum class FaultType_cd55c07f69249798: uint16_t {
   INTERRUPT_RATE_CAN2,
   INTERRUPT_RATE_CAN3,
   INTERRUPT_RATE_TACH,
-  INTERRUPT_RATE_GMLAN_D_E_P_R_E_C_A_T_E_D,
+  INTERRUPT_RATE_GMLAN,
   INTERRUPT_RATE_INTERRUPTS,
   INTERRUPT_RATE_SPI_DMA,
   INTERRUPT_RATE_SPI_CS,
@@ -2495,7 +2493,7 @@ struct Event {
     ACCELEROMETER2,
     UI_DEBUG,
     MICROPHONE,
-    NAV_MODEL_D_E_P_R_E_C_A_T_E_D,
+    NAV_MODEL,
     MAP_RENDER_STATE,
     UI_PLAN,
     CONTROLS_STATE_S_P,
@@ -2518,7 +2516,6 @@ struct Event {
     CUSTOM_RESERVED_RAW_DATA0,
     CUSTOM_RESERVED_RAW_DATA1,
     CUSTOM_RESERVED_RAW_DATA2,
-    CAR_OUTPUT,
   };
 
   struct _capnpPrivate {
@@ -4635,7 +4632,7 @@ public:
 
   inline float getBearingDeg() const;
 
-  inline float getHorizontalAccuracy() const;
+  inline float getAccuracy() const;
 
   inline  ::int64_t getUnixTimestampMillis() const;
 
@@ -4649,8 +4646,6 @@ public:
   inline float getBearingAccuracyDeg() const;
 
   inline float getSpeedAccuracy() const;
-
-  inline bool getHasFix() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -4698,8 +4693,8 @@ public:
   inline float getBearingDeg();
   inline void setBearingDeg(float value);
 
-  inline float getHorizontalAccuracy();
-  inline void setHorizontalAccuracy(float value);
+  inline float getAccuracy();
+  inline void setAccuracy(float value);
 
   inline  ::int64_t getUnixTimestampMillis();
   inline void setUnixTimestampMillis( ::int64_t value);
@@ -4723,9 +4718,6 @@ public:
 
   inline float getSpeedAccuracy();
   inline void setSpeedAccuracy(float value);
-
-  inline bool getHasFix();
-  inline void setHasFix(bool value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -4966,8 +4958,6 @@ public:
 
   inline float getMaxTempC() const;
 
-  inline  ::cereal::InitData::DeviceType getDeviceType() const;
-
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -5176,9 +5166,6 @@ public:
 
   inline float getMaxTempC();
   inline void setMaxTempC(float value);
-
-  inline  ::cereal::InitData::DeviceType getDeviceType();
-  inline void setDeviceType( ::cereal::InitData::DeviceType value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -5536,7 +5523,7 @@ public:
 
   inline  ::uint32_t getTxBufferOverflow() const;
 
-  inline  ::uint32_t getGmlanSendErrsDEPRECATED() const;
+  inline  ::uint32_t getGmlanSendErrs() const;
 
   inline  ::cereal::PandaState::PandaType getPandaType() const;
 
@@ -5651,8 +5638,8 @@ public:
   inline  ::uint32_t getTxBufferOverflow();
   inline void setTxBufferOverflow( ::uint32_t value);
 
-  inline  ::uint32_t getGmlanSendErrsDEPRECATED();
-  inline void setGmlanSendErrsDEPRECATED( ::uint32_t value);
+  inline  ::uint32_t getGmlanSendErrs();
+  inline void setGmlanSendErrs( ::uint32_t value);
 
   inline  ::cereal::PandaState::PandaType getPandaType();
   inline void setPandaType( ::cereal::PandaState::PandaType value);
@@ -6837,8 +6824,6 @@ public:
 
   inline bool getExperimentalMode() const;
 
-  inline  ::cereal::LongitudinalPersonality getPersonality() const;
-
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -7067,9 +7052,6 @@ public:
 
   inline bool getExperimentalMode();
   inline void setExperimentalMode(bool value);
-
-  inline  ::cereal::LongitudinalPersonality getPersonality();
-  inline void setPersonality( ::cereal::LongitudinalPersonality value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -8271,11 +8253,11 @@ public:
   inline bool hasTemporalPose() const;
   inline  ::cereal::ModelDataV2::Pose::Reader getTemporalPose() const;
 
-  inline bool getNavEnabledDEPRECATED() const;
+  inline bool getNavEnabled() const;
 
   inline  ::cereal::ModelDataV2::ConfidenceClass getConfidence() const;
 
-  inline  ::uint64_t getLocationMonoTimeDEPRECATED() const;
+  inline  ::uint64_t getLocationMonoTime() const;
 
   inline bool hasLateralPlannerSolutionDEPRECATED() const;
   inline  ::cereal::ModelDataV2::LateralPlannerSolution::Reader getLateralPlannerSolutionDEPRECATED() const;
@@ -8440,14 +8422,14 @@ public:
   inline void adoptTemporalPose(::capnp::Orphan< ::cereal::ModelDataV2::Pose>&& value);
   inline ::capnp::Orphan< ::cereal::ModelDataV2::Pose> disownTemporalPose();
 
-  inline bool getNavEnabledDEPRECATED();
-  inline void setNavEnabledDEPRECATED(bool value);
+  inline bool getNavEnabled();
+  inline void setNavEnabled(bool value);
 
   inline  ::cereal::ModelDataV2::ConfidenceClass getConfidence();
   inline void setConfidence( ::cereal::ModelDataV2::ConfidenceClass value);
 
-  inline  ::uint64_t getLocationMonoTimeDEPRECATED();
-  inline void setLocationMonoTimeDEPRECATED( ::uint64_t value);
+  inline  ::uint64_t getLocationMonoTime();
+  inline void setLocationMonoTime( ::uint64_t value);
 
   inline bool hasLateralPlannerSolutionDEPRECATED();
   inline  ::cereal::ModelDataV2::LateralPlannerSolution::Builder getLateralPlannerSolutionDEPRECATED();
@@ -9750,7 +9732,7 @@ public:
 
   inline float getSolverExecutionTime() const;
 
-  inline  ::cereal::LongitudinalPersonality getPersonalityDEPRECATED() const;
+  inline  ::cereal::LongitudinalPersonality getPersonality() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -9916,8 +9898,8 @@ public:
   inline float getSolverExecutionTime();
   inline void setSolverExecutionTime(float value);
 
-  inline  ::cereal::LongitudinalPersonality getPersonalityDEPRECATED();
-  inline void setPersonalityDEPRECATED( ::cereal::LongitudinalPersonality value);
+  inline  ::cereal::LongitudinalPersonality getPersonality();
+  inline void setPersonality( ::cereal::LongitudinalPersonality value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -19183,9 +19165,9 @@ public:
   inline bool hasMicrophone() const;
   inline  ::cereal::Microphone::Reader getMicrophone() const;
 
-  inline bool isNavModelDEPRECATED() const;
-  inline bool hasNavModelDEPRECATED() const;
-  inline  ::cereal::NavModelData::Reader getNavModelDEPRECATED() const;
+  inline bool isNavModel() const;
+  inline bool hasNavModel() const;
+  inline  ::cereal::NavModelData::Reader getNavModel() const;
 
   inline bool isMapRenderState() const;
   inline bool hasMapRenderState() const;
@@ -19274,10 +19256,6 @@ public:
   inline bool isCustomReservedRawData2() const;
   inline bool hasCustomReservedRawData2() const;
   inline  ::capnp::Data::Reader getCustomReservedRawData2() const;
-
-  inline bool isCarOutput() const;
-  inline bool hasCarOutput() const;
-  inline  ::cereal::CarOutput::Reader getCarOutput() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -20130,13 +20108,13 @@ public:
   inline void adoptMicrophone(::capnp::Orphan< ::cereal::Microphone>&& value);
   inline ::capnp::Orphan< ::cereal::Microphone> disownMicrophone();
 
-  inline bool isNavModelDEPRECATED();
-  inline bool hasNavModelDEPRECATED();
-  inline  ::cereal::NavModelData::Builder getNavModelDEPRECATED();
-  inline void setNavModelDEPRECATED( ::cereal::NavModelData::Reader value);
-  inline  ::cereal::NavModelData::Builder initNavModelDEPRECATED();
-  inline void adoptNavModelDEPRECATED(::capnp::Orphan< ::cereal::NavModelData>&& value);
-  inline ::capnp::Orphan< ::cereal::NavModelData> disownNavModelDEPRECATED();
+  inline bool isNavModel();
+  inline bool hasNavModel();
+  inline  ::cereal::NavModelData::Builder getNavModel();
+  inline void setNavModel( ::cereal::NavModelData::Reader value);
+  inline  ::cereal::NavModelData::Builder initNavModel();
+  inline void adoptNavModel(::capnp::Orphan< ::cereal::NavModelData>&& value);
+  inline ::capnp::Orphan< ::cereal::NavModelData> disownNavModel();
 
   inline bool isMapRenderState();
   inline bool hasMapRenderState();
@@ -20313,14 +20291,6 @@ public:
   inline  ::capnp::Data::Builder initCustomReservedRawData2(unsigned int size);
   inline void adoptCustomReservedRawData2(::capnp::Orphan< ::capnp::Data>&& value);
   inline ::capnp::Orphan< ::capnp::Data> disownCustomReservedRawData2();
-
-  inline bool isCarOutput();
-  inline bool hasCarOutput();
-  inline  ::cereal::CarOutput::Builder getCarOutput();
-  inline void setCarOutput( ::cereal::CarOutput::Reader value);
-  inline  ::cereal::CarOutput::Builder initCarOutput();
-  inline void adoptCarOutput(::capnp::Orphan< ::cereal::CarOutput>&& value);
-  inline ::capnp::Orphan< ::cereal::CarOutput> disownCarOutput();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -24068,16 +24038,16 @@ inline void GpsLocationData::Builder::setBearingDeg(float value) {
       ::capnp::bounded<8>() * ::capnp::ELEMENTS, value);
 }
 
-inline float GpsLocationData::Reader::getHorizontalAccuracy() const {
+inline float GpsLocationData::Reader::getAccuracy() const {
   return _reader.getDataField<float>(
       ::capnp::bounded<9>() * ::capnp::ELEMENTS);
 }
 
-inline float GpsLocationData::Builder::getHorizontalAccuracy() {
+inline float GpsLocationData::Builder::getAccuracy() {
   return _builder.getDataField<float>(
       ::capnp::bounded<9>() * ::capnp::ELEMENTS);
 }
-inline void GpsLocationData::Builder::setHorizontalAccuracy(float value) {
+inline void GpsLocationData::Builder::setAccuracy(float value) {
   _builder.setDataField<float>(
       ::capnp::bounded<9>() * ::capnp::ELEMENTS, value);
 }
@@ -24188,20 +24158,6 @@ inline float GpsLocationData::Builder::getSpeedAccuracy() {
 inline void GpsLocationData::Builder::setSpeedAccuracy(float value) {
   _builder.setDataField<float>(
       ::capnp::bounded<14>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool GpsLocationData::Reader::getHasFix() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<480>() * ::capnp::ELEMENTS);
-}
-
-inline bool GpsLocationData::Builder::getHasFix() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<480>() * ::capnp::ELEMENTS);
-}
-inline void GpsLocationData::Builder::setHasFix(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<480>() * ::capnp::ELEMENTS, value);
 }
 
 inline  ::uint32_t CanData::Reader::getAddress() const {
@@ -25144,20 +25100,6 @@ inline void DeviceState::Builder::setMaxTempC(float value) {
       ::capnp::bounded<23>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::cereal::InitData::DeviceType DeviceState::Reader::getDeviceType() const {
-  return _reader.getDataField< ::cereal::InitData::DeviceType>(
-      ::capnp::bounded<41>() * ::capnp::ELEMENTS);
-}
-
-inline  ::cereal::InitData::DeviceType DeviceState::Builder::getDeviceType() {
-  return _builder.getDataField< ::cereal::InitData::DeviceType>(
-      ::capnp::bounded<41>() * ::capnp::ELEMENTS);
-}
-inline void DeviceState::Builder::setDeviceType( ::cereal::InitData::DeviceType value) {
-  _builder.setDataField< ::cereal::InitData::DeviceType>(
-      ::capnp::bounded<41>() * ::capnp::ELEMENTS, value);
-}
-
 inline bool DeviceState::ThermalZone::Reader::hasName() const {
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
@@ -25544,16 +25486,16 @@ inline void PandaState::Builder::setTxBufferOverflow( ::uint32_t value) {
       ::capnp::bounded<4>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::uint32_t PandaState::Reader::getGmlanSendErrsDEPRECATED() const {
+inline  ::uint32_t PandaState::Reader::getGmlanSendErrs() const {
   return _reader.getDataField< ::uint32_t>(
       ::capnp::bounded<5>() * ::capnp::ELEMENTS);
 }
 
-inline  ::uint32_t PandaState::Builder::getGmlanSendErrsDEPRECATED() {
+inline  ::uint32_t PandaState::Builder::getGmlanSendErrs() {
   return _builder.getDataField< ::uint32_t>(
       ::capnp::bounded<5>() * ::capnp::ELEMENTS);
 }
-inline void PandaState::Builder::setGmlanSendErrsDEPRECATED( ::uint32_t value) {
+inline void PandaState::Builder::setGmlanSendErrs( ::uint32_t value) {
   _builder.setDataField< ::uint32_t>(
       ::capnp::bounded<5>() * ::capnp::ELEMENTS, value);
 }
@@ -28443,20 +28385,6 @@ inline void ControlsState::Builder::setExperimentalMode(bool value) {
       ::capnp::bounded<715>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::cereal::LongitudinalPersonality ControlsState::Reader::getPersonality() const {
-  return _reader.getDataField< ::cereal::LongitudinalPersonality>(
-      ::capnp::bounded<85>() * ::capnp::ELEMENTS);
-}
-
-inline  ::cereal::LongitudinalPersonality ControlsState::Builder::getPersonality() {
-  return _builder.getDataField< ::cereal::LongitudinalPersonality>(
-      ::capnp::bounded<85>() * ::capnp::ELEMENTS);
-}
-inline void ControlsState::Builder::setPersonality( ::cereal::LongitudinalPersonality value) {
-  _builder.setDataField< ::cereal::LongitudinalPersonality>(
-      ::capnp::bounded<85>() * ::capnp::ELEMENTS, value);
-}
-
 inline bool ControlsState::LateralINDIState::Reader::getActive() const {
   return _reader.getDataField<bool>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
@@ -30591,16 +30519,16 @@ inline ::capnp::Orphan< ::cereal::ModelDataV2::Pose> ModelDataV2::Builder::disow
       ::capnp::bounded<14>() * ::capnp::POINTERS));
 }
 
-inline bool ModelDataV2::Reader::getNavEnabledDEPRECATED() const {
+inline bool ModelDataV2::Reader::getNavEnabled() const {
   return _reader.getDataField<bool>(
       ::capnp::bounded<256>() * ::capnp::ELEMENTS);
 }
 
-inline bool ModelDataV2::Builder::getNavEnabledDEPRECATED() {
+inline bool ModelDataV2::Builder::getNavEnabled() {
   return _builder.getDataField<bool>(
       ::capnp::bounded<256>() * ::capnp::ELEMENTS);
 }
-inline void ModelDataV2::Builder::setNavEnabledDEPRECATED(bool value) {
+inline void ModelDataV2::Builder::setNavEnabled(bool value) {
   _builder.setDataField<bool>(
       ::capnp::bounded<256>() * ::capnp::ELEMENTS, value);
 }
@@ -30619,16 +30547,16 @@ inline void ModelDataV2::Builder::setConfidence( ::cereal::ModelDataV2::Confiden
       ::capnp::bounded<17>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::uint64_t ModelDataV2::Reader::getLocationMonoTimeDEPRECATED() const {
+inline  ::uint64_t ModelDataV2::Reader::getLocationMonoTime() const {
   return _reader.getDataField< ::uint64_t>(
       ::capnp::bounded<5>() * ::capnp::ELEMENTS);
 }
 
-inline  ::uint64_t ModelDataV2::Builder::getLocationMonoTimeDEPRECATED() {
+inline  ::uint64_t ModelDataV2::Builder::getLocationMonoTime() {
   return _builder.getDataField< ::uint64_t>(
       ::capnp::bounded<5>() * ::capnp::ELEMENTS);
 }
-inline void ModelDataV2::Builder::setLocationMonoTimeDEPRECATED( ::uint64_t value) {
+inline void ModelDataV2::Builder::setLocationMonoTime( ::uint64_t value) {
   _builder.setDataField< ::uint64_t>(
       ::capnp::bounded<5>() * ::capnp::ELEMENTS, value);
 }
@@ -33057,16 +32985,16 @@ inline void LongitudinalPlan::Builder::setSolverExecutionTime(float value) {
       ::capnp::bounded<19>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::cereal::LongitudinalPersonality LongitudinalPlan::Reader::getPersonalityDEPRECATED() const {
+inline  ::cereal::LongitudinalPersonality LongitudinalPlan::Reader::getPersonality() const {
   return _reader.getDataField< ::cereal::LongitudinalPersonality>(
       ::capnp::bounded<40>() * ::capnp::ELEMENTS);
 }
 
-inline  ::cereal::LongitudinalPersonality LongitudinalPlan::Builder::getPersonalityDEPRECATED() {
+inline  ::cereal::LongitudinalPersonality LongitudinalPlan::Builder::getPersonality() {
   return _builder.getDataField< ::cereal::LongitudinalPersonality>(
       ::capnp::bounded<40>() * ::capnp::ELEMENTS);
 }
-inline void LongitudinalPlan::Builder::setPersonalityDEPRECATED( ::cereal::LongitudinalPersonality value) {
+inline void LongitudinalPlan::Builder::setPersonality( ::cereal::LongitudinalPersonality value) {
   _builder.setDataField< ::cereal::LongitudinalPersonality>(
       ::capnp::bounded<40>() * ::capnp::ELEMENTS, value);
 }
@@ -51981,55 +51909,55 @@ inline ::capnp::Orphan< ::cereal::Microphone> Event::Builder::disownMicrophone()
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline bool Event::Reader::isNavModelDEPRECATED() const {
-  return which() == Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D;
+inline bool Event::Reader::isNavModel() const {
+  return which() == Event::NAV_MODEL;
 }
-inline bool Event::Builder::isNavModelDEPRECATED() {
-  return which() == Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D;
+inline bool Event::Builder::isNavModel() {
+  return which() == Event::NAV_MODEL;
 }
-inline bool Event::Reader::hasNavModelDEPRECATED() const {
-  if (which() != Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D) return false;
+inline bool Event::Reader::hasNavModel() const {
+  if (which() != Event::NAV_MODEL) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline bool Event::Builder::hasNavModelDEPRECATED() {
-  if (which() != Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D) return false;
+inline bool Event::Builder::hasNavModel() {
+  if (which() != Event::NAV_MODEL) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::NavModelData::Reader Event::Reader::getNavModelDEPRECATED() const {
-  KJ_IREQUIRE((which() == Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D),
+inline  ::cereal::NavModelData::Reader Event::Reader::getNavModel() const {
+  KJ_IREQUIRE((which() == Event::NAV_MODEL),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::NavModelData>::get(_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline  ::cereal::NavModelData::Builder Event::Builder::getNavModelDEPRECATED() {
-  KJ_IREQUIRE((which() == Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D),
+inline  ::cereal::NavModelData::Builder Event::Builder::getNavModel() {
+  KJ_IREQUIRE((which() == Event::NAV_MODEL),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::NavModelData>::get(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::setNavModelDEPRECATED( ::cereal::NavModelData::Reader value) {
+inline void Event::Builder::setNavModel( ::cereal::NavModelData::Reader value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::NAV_MODEL);
   ::capnp::_::PointerHelpers< ::cereal::NavModelData>::set(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::NavModelData::Builder Event::Builder::initNavModelDEPRECATED() {
+inline  ::cereal::NavModelData::Builder Event::Builder::initNavModel() {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::NAV_MODEL);
   return ::capnp::_::PointerHelpers< ::cereal::NavModelData>::init(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::adoptNavModelDEPRECATED(
+inline void Event::Builder::adoptNavModel(
     ::capnp::Orphan< ::cereal::NavModelData>&& value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::NAV_MODEL);
   ::capnp::_::PointerHelpers< ::cereal::NavModelData>::adopt(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::NavModelData> Event::Builder::disownNavModelDEPRECATED() {
-  KJ_IREQUIRE((which() == Event::NAV_MODEL_D_E_P_R_E_C_A_T_E_D),
+inline ::capnp::Orphan< ::cereal::NavModelData> Event::Builder::disownNavModel() {
+  KJ_IREQUIRE((which() == Event::NAV_MODEL),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::NavModelData>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
@@ -53220,60 +53148,6 @@ inline ::capnp::Orphan< ::capnp::Data> Event::Builder::disownCustomReservedRawDa
   KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA2),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::capnp::Data>::disown(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-
-inline bool Event::Reader::isCarOutput() const {
-  return which() == Event::CAR_OUTPUT;
-}
-inline bool Event::Builder::isCarOutput() {
-  return which() == Event::CAR_OUTPUT;
-}
-inline bool Event::Reader::hasCarOutput() const {
-  if (which() != Event::CAR_OUTPUT) return false;
-  return !_reader.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
-}
-inline bool Event::Builder::hasCarOutput() {
-  if (which() != Event::CAR_OUTPUT) return false;
-  return !_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
-}
-inline  ::cereal::CarOutput::Reader Event::Reader::getCarOutput() const {
-  KJ_IREQUIRE((which() == Event::CAR_OUTPUT),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CarOutput>::get(_reader.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline  ::cereal::CarOutput::Builder Event::Builder::getCarOutput() {
-  KJ_IREQUIRE((which() == Event::CAR_OUTPUT),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CarOutput>::get(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline void Event::Builder::setCarOutput( ::cereal::CarOutput::Reader value) {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CAR_OUTPUT);
-  ::capnp::_::PointerHelpers< ::cereal::CarOutput>::set(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
-}
-inline  ::cereal::CarOutput::Builder Event::Builder::initCarOutput() {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CAR_OUTPUT);
-  return ::capnp::_::PointerHelpers< ::cereal::CarOutput>::init(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline void Event::Builder::adoptCarOutput(
-    ::capnp::Orphan< ::cereal::CarOutput>&& value) {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CAR_OUTPUT);
-  ::capnp::_::PointerHelpers< ::cereal::CarOutput>::adopt(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::cereal::CarOutput> Event::Builder::disownCarOutput() {
-  KJ_IREQUIRE((which() == Event::CAR_OUTPUT),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CarOutput>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
